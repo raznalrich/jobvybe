@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-home',
@@ -12,13 +11,15 @@ import { Router } from '@angular/router';
 })
 
 export class Home {
-  jobs = [
-    { title: 'Frontend Developer', company: 'Tech Solutions', location: 'Remote' },
-    { title: 'Backend Engineer', company: 'InnovateX', location: 'New York, NY' },
-    { title: 'UI/UX Designer', company: 'Creative Minds', location: 'San Francisco, CA' }
-  ];
+  jobs: any[] = [];
+  loading: boolean = true;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,private firebaseService: FirebaseService,private cdr: ChangeDetectorRef) {}
+  async ngOnInit() {
+    this.jobs = await this.firebaseService.getJobs();
+    this.loading = false;
+    this.cdr.detectChanges();
+  }
 
   apply(id: number) {
     this.router.navigate(['/job-details', id]);

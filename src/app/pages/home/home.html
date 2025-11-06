@@ -4,13 +4,15 @@
 		<p class="subtitle">Find your next opportunity</p>
 	</header>
 	<section class="job-list">
-		<!-- Placeholder for job cards -->
+		<!-- <div *ngIf="loading" class="loading">Loading jobs...</div> -->
+		<div *ngIf="!loading && jobs.length > 0">
 		<div class="job-card" *ngFor="let job of jobs; let i = index">
 			<h2>{{ job.title }}</h2>
 			<p>{{ job.company }}</p>
 			<span class="location">{{ job.location }}</span>
 			<button class="apply-btn" (click)="apply(i)">Apply</button>
 		</div>
-		<div *ngIf="!jobs.length" class="empty-state">No vacancies available.</div>
+	</div>
+		<!-- <div *ngIf="!jobs.length" class="empty-state">No vacancies available.</div> -->
 	</section>
 </div>

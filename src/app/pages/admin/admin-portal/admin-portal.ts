@@ -1,6 +1,6 @@
 
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../../services/firebase.service';
 
@@ -11,11 +11,7 @@ import { FirebaseService } from '../../../services/firebase.service';
   styleUrl: './admin-portal.scss'
 })
 export class AdminPortal {
-  jobs = [
-    { title: 'Frontend Developer', company: 'Tech Solutions', location: 'Remote' },
-    { title: 'Backend Engineer', company: 'InnovateX', location: 'New York, NY' },
-    { title: 'UI/UX Designer', company: 'Creative Minds', location: 'San Francisco, CA' }
-  ];
+  jobs: any[] = [];
 
   showAddModal = false;
   newJob: any = {
@@ -28,6 +24,11 @@ export class AdminPortal {
   };
 
   constructor(private firebaseService: FirebaseService) {}
+  async ngOnInit() {
+    this.jobs = await this.firebaseService.getJobs();
+
+    
+  }
 
   async addJob() {
     if (

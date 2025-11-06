@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { addDoc, collection, getDocs, getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCUfyRo0SwoRkceyGLm9Tir5ydGBrPkli0',
@@ -20,5 +20,14 @@ export class FirebaseService {
   async addJob(job: any) {
     const docRef = await addDoc(collection(db, 'jobs'), job);
     return docRef.id;
+  }
+  async getJobs() {
+    const jobsCol = collection(db, 'jobs');
+    
+    const jobsSnapshot = await getDocs(jobsCol);
+    const jobsList = jobsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    console.log(jobsList);
+
+    return jobsList;
   }
 }
