@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { addDoc, collection, getDocs, getFirestore } from 'firebase/firestore';
+import { addDoc, collection, getDocs, getFirestore, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCUfyRo0SwoRkceyGLm9Tir5ydGBrPkli0',
@@ -29,5 +29,15 @@ export class FirebaseService {
     console.log(jobsList);
 
     return jobsList;
+  }
+
+  async updateJob(id: string, job: any) {
+    const jobDoc = doc(db, 'jobs', id);
+    await updateDoc(jobDoc, job);
+  }
+
+  async deleteJob(id: string) {
+    const jobDoc = doc(db, 'jobs', id);
+    await deleteDoc(jobDoc);
   }
 }

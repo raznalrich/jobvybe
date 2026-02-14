@@ -1,23 +1,27 @@
 <div class="navbar">
-  <button class="back-icon" aria-label="Back">
+  <button class="back-icon" aria-label="Back" (click)="goBack()">
     &#8592;
   </button>
   <span class="logo">Vacancy</span>
 </div>
 
-<div class="job-container">
+<div *ngIf="loading" class="loading">Loading job details...</div>
+
+<div *ngIf="!loading && currentJob" class="job-container">
   <div class="job-image">
-    <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Job Image" />
+    <img src="https://static.vecteezy.com/system/resources/previews/009/665/213/original/job-vacancy-social-media-post-with-we-are-hiring-text-job-recruitment-poster-element-image-with-red-and-black-colors-recruitment-banner-element-design-for-business-free-png.png" alt="Job Image" />
   </div>
   <div class="job-details">
-    <h2>klklklkll</h2>
-    <p>ssdfsdf</p>
+    <h2>{{ currentJob.title }}</h2>
+    <p>{{ currentJob.company }}</p>
     <ul>
-      <li><strong>Location:</strong> ssdfsdf</li>
-      <li><strong>Type:</strong> Full Time</li>
-      <li><strong>Posted on:</strong> 2025-10-14</li>
+      <li><strong>Location:</strong> {{ currentJob.location }}</li>
+      <li><strong>Type:</strong> {{ currentJob.type }}</li>
+      <li><strong>Description:</strong> {{ currentJob.description }}</li>
     </ul>
-    <button class="apply-btn">Apply Now</button>
+    <a [href]="currentJob.image" target="_blank"><button class="apply-btn" >Apply Now</button></a>
     <!-- <button class="back-btn" >Back</button> -->
   </div>
 </div>
+
+<div *ngIf="!loading && !currentJob" class="error">Job not found.</div>

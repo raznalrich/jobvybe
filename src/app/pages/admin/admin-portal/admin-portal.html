@@ -4,11 +4,11 @@
 		<p class="subtitle">Manage job vacancies</p>
 	</header>
 	<section class="admin-actions">
-			<button class="add-btn" (click)="showAddModal = true">Add Job Vacancy</button>
-			<div class="modal-backdrop" *ngIf="showAddModal">
+			<button class="add-btn" (click)="openAddModal()">Add Job Vacancy</button>
+			<div class="modal-backdrop" *ngIf="showAddModal()">
 				<div class="modal">
-					<h2>Add Job Vacancy</h2>
-					<form (ngSubmit)="addJob()" #jobForm="ngForm">
+					<h2>{{ isEditMode() ? 'Edit Job Vacancy' : 'Add Job Vacancy' }}</h2>
+					<form (ngSubmit)="saveJob()" #jobForm="ngForm">
 						<input type="text" placeholder="Title" [(ngModel)]="newJob.title" name="title" required />
 						<input type="text" placeholder="Company" [(ngModel)]="newJob.company" name="company" required />
 						<input type="text" placeholder="Location" [(ngModel)]="newJob.location" name="location" required />
@@ -16,8 +16,8 @@
 						<input type="text" placeholder="Image URL" [(ngModel)]="newJob.image" name="image" />
 						<textarea placeholder="Description" [(ngModel)]="newJob.description" name="description" required></textarea>
 						<div class="modal-actions">
-							<button type="submit" class="add-btn">Add</button>
-							<button type="button" class="cancel-btn" (click)="showAddModal = false">Cancel</button>
+							<button type="submit" class="add-btn">{{ isEditMode() ? 'Update' : 'Add' }}</button>
+							<button type="button" class="cancel-btn" (click)="closeModal()">Cancel</button>
 						</div>
 					</form>
 				</div>
@@ -26,15 +26,15 @@
 	<section class="admin-list">
 		<!-- Placeholder for admin job cards -->
 		 
-		<div class="admin-job-card" *ngFor="let job of jobs">
+		<div class="admin-job-card" *ngFor="let job of jobs(); let i = index">
 			<h2>{{ job.title }}</h2>
 			<p>{{ job.company }}</p>
 			<span class="location">{{ job.location }}</span>
 			<div class="actions">
-				<button class="edit-btn">Edit</button>
-				<button class="delete-btn">Delete</button>
+				<button class="edit-btn" (click)="editJob(i)">Edit</button>
+				<button class="delete-btn" (click)="deleteJob(i)">Delete</button>
 			</div>
 		</div>
-		<div *ngIf="!jobs.length" class="empty-state">No vacancies to manage.</div>
+		<div *ngIf="!jobs().length" class="empty-state">No vacancies to manage.</div>
 	</section>
 </div>

@@ -1,6 +1,6 @@
 
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../../services/firebase.service';
 
@@ -11,10 +11,14 @@ import { FirebaseService } from '../../../services/firebase.service';
   styleUrl: './admin-portal.scss'
 })
 export class AdminPortal {
-  jobs: any[] = [];
+  jobs = signal<any[]>([]);
 
-  showAddModal = false;
-  newJob: any = {
+  showAddModal = signal(false);
+  isEditMode = signal(false);
+  editingIndex = signal(-1);
+  
+  // Use regular object for ngModel binding
+  newJob = {
     title: '',
     company: '',
     location: '',
@@ -24,26 +28,70 @@ export class AdminPortal {
   };
 
   constructor(private firebaseService: FirebaseService) {}
+  
   async ngOnInit() {
-    this.jobs = await this.firebaseService.getJobs();
-
-    
+    await this.loadJobs();
   }
 
-  async addJob() {
+  async loadJobs() {
+    const jobsList = await this.firebaseService.getJobs();
+    this.jobs.set(jobsList);
+  }
+
+  openAddModal() {
+    this.isEditMode.set(false);
+    this.editingIndex.set(-1);
+    this.newJob = {
+      title: '', company: '', location: '', type: '', image: '', description: ''
+    };
+    this.showAddModal.set(true);
+  }
+
+  editJob(index: number) {
+    this.isEditMode.set(true);
+    this.editingIndex.set(index);
+    const job = this.jobs()[index];
+    this.newJob = { ...job };
+    this.showAddModal.set(true);
+  }
+
+  closeModal() {
+    this.showAddModal.set(false);
+    this.isEditMode.set(false);
+    this.editingIndex.set(-1);
+    this.newJob = {
+      title: '', company: '', location: '', type: '', image: '', description: ''
+    };
+  }
+
+  async saveJob() {
+    const job = this.newJob;
     if (
-      this.newJob.title &&
-      this.newJob.company &&
-      this.newJob.location &&
-      this.newJob.type &&
-      this.newJob.description
+      job.title &&
+      job.company &&
+      job.location &&
+      job.type &&
+      job.description
     ) {
-      await this.firebaseService.addJob(this.newJob);
-      this.showAddModal = false;
-      this.newJob = {
-        title: '', company: '', location: '', type: '', image: '', description: ''
-      };
-      // Optionally, refresh jobs from Firebase here
+      if (this.isEditMode()) {
+        // Update existing job
+        const jobId = this.jobs()[this.editingIndex()].id;
+        await this.firebaseService.updateJob(jobId, job);
+        await this.loadJobs();
+      } else {
+        // Add new job
+        await this.firebaseService.addJob(job);
+        await this.loadJobs();
+      }
+      this.closeModal();
+    }
+  }
+
+  async deleteJob(index: number) {
+    if (confirm('Are you sure you want to delete this job?')) {
+      const jobId = this.jobs()[index].id;
+      await this.firebaseService.deleteJob(jobId);
+      await this.loadJobs();
     }
   }
 }

@@ -32,7 +32,8 @@ h1 {
 	max-width: 600px;
 	display: flex;
 	flex-direction: column;
-	gap: 1.5rem;
+	gap: 2.5rem;
+	padding: 0 1rem;
 }
 
 .job-card {
@@ -44,6 +45,7 @@ h1 {
 	flex-direction: column;
 	align-items: flex-start;
 	transition: box-shadow 0.2s;
+	margin-top: 20px;
 }
 
 .job-card:hover {

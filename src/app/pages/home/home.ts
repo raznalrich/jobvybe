@@ -14,14 +14,24 @@ export class Home {
   jobs: any[] = [];
   loading: boolean = true;
 
-  constructor(private router: Router,private firebaseService: FirebaseService,private cdr: ChangeDetectorRef) {}
+  constructor(private router: Router, private firebaseService: FirebaseService, private cdr: ChangeDetectorRef) {}
+  
   async ngOnInit() {
-    this.jobs = await this.firebaseService.getJobs();
-    this.loading = false;
-    this.cdr.detectChanges();
+    try {
+      this.loading = true;
+      console.log('Fetching jobs...');
+      this.jobs = await this.firebaseService.getJobs();
+      console.log('Jobs fetched:', this.jobs);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    } finally {
+      this.loading = false;
+      console.log('Loading complete. Jobs count:', this.jobs.length);
+      this.cdr.detectChanges();
+    }
   }
 
-  apply(id: number) {
+  apply(id: string) {
     this.router.navigate(['/job-details', id]);
   }
 }
